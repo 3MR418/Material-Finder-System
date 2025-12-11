@@ -1,4 +1,4 @@
-This is a simple program developed by first-year Metallurgical Engineering students. The goal of this program is to suggest the most suitable material for your project based on the importance of the properties you provide.
+This is a simple program developed by first-year Metallurgical Engineering students at Cairo University. The goal of this program is to suggest the most suitable material for your project based on the importance of the properties you provide.
 
 How to Use
 
