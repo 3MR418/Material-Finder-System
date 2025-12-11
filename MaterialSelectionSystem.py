@@ -10,20 +10,16 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 # ---------------- CONFIG ----------------
-# ⚠️ تأكد من تحديث هذا المسار ليتناسب مع موقع ملفك الفعلي
-CSV_PATH = r"C:\Users\3MR\Desktop\MaterialSelectionSystem\material_dataset.csv" 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, "material_dataset.csv") 
 # ----------------------------------------
 
 # ---------------- CORE FUNCTIONS ----------------
 def load_database(csv_path):
-    if os.path.isdir(csv_path):
-        candidate = os.path.join(csv_path, "material_dataset.csv")
-    else:
-        candidate = csv_path
-
-    if not os.path.exists(candidate) or not os.path.isfile(candidate):
-        raise FileNotFoundError(f"ملف قاعدة البيانات غير موجود في المسار: {candidate}\nالرجاء التحقق من المسار CSV_PATH وضمان وجود ملف material_dataset.csv.")
-    df = pd.read_csv(candidate)
+    if not os.path.exists(csv_path) or not os.path.isfile(csv_path):
+        raise FileNotFoundError(f"ملف قاعدة البيانات غير موجود في المسار: {csv_path}\nالرجاء التأكد من وضع ملف material_dataset.csv في نفس مجلد البرنامج.")
+    
+    df = pd.read_csv(csv_path)
     
     df.columns = df.columns.str.strip()
 
@@ -60,7 +56,6 @@ class ExactMaterialSelector(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.critical(None, "Database Error", str(e))
             sys.exit(1)
         
-        # تم الاحتفاظ بأسماء الأعمدة هنا لضمان عدم حدوث خطأ في وظائف أخرى قد تستخدمها
         self.col_map = {
             'Material Name': self._find_col(['Material Name', 'Name', 'Mat_Name']),
             'Family': self._find_col(['Family', 'Material Family', 'Type']),
@@ -91,11 +86,11 @@ class ExactMaterialSelector(QtWidgets.QMainWindow):
                 ("Hardness", "Hardness"),
             ],
             "Physical and Thermal Properties": [
-                ("Density", "Density"),               
+                ("Density", "Density"), 
                 ("Melting Point", "Melting Point"), 
                 ("Thermal Conductivity", "Thermal Conductivity"),
                 ("Electrical Conductivity", "Electrical Conductivity"),
-                ("Corrosion Resistance", "Corrosion Resistance"),         
+                ("Corrosion Resistance", "Corrosion Resistance"), 
             ],
             "Economic Properties": [
                 ("Cost per kg (USD)", "Cost"), 
@@ -378,11 +373,11 @@ class ExactMaterialSelector(QtWidgets.QMainWindow):
             
             if cost_col and cost_col in row:
                  try:
-                    cost_val = pd.to_numeric(row[cost_col], errors='coerce') 
-                    if not pd.isna(cost_val):
-                        cost_text = f" — {cost_val:g}$"
+                     cost_val = pd.to_numeric(row[cost_col], errors='coerce') 
+                     if not pd.isna(cost_val):
+                         cost_text = f" — {cost_val:g}$"
                  except:
-                    pass
+                     pass
 
             self.results_list.addItem(f"{i+1}. {name}{cost_text} — Score: {row['_score']:.4f}")
 
@@ -394,8 +389,7 @@ class ExactMaterialSelector(QtWidgets.QMainWindow):
         return None
 
     def _setup_graph_theme(self):
-        # تم تحديث الألوان لتناسب الثيم الأزرق وتحويلها إلى Hex Code
-        BG_COLOR = "#051428"  # Darker Blue/Navy Background (was rgba(5, 20, 40, 255))
+        BG_COLOR = "#051428"  # Darker Blue/Navy Background
         TEXT_COLOR = "#FFFFFF"            
         GRID_COLOR = "#FFFFFF1A"          # Faint White Grid
 
@@ -427,7 +421,6 @@ class ExactMaterialSelector(QtWidgets.QMainWindow):
     def _update_graph(self, sorted_df):
         self.ax.clear()
         
-        # تم تحديث الألوان لتناسب الثيم الأزرق وتحويلها إلى Hex Code
         BG_COLOR = "#051428" 
         TEXT_COLOR = "#FFFFFF" 
         LINE_COLOR = "#00BFFF"   # Deep Sky Blue (Accent)
@@ -443,13 +436,13 @@ class ExactMaterialSelector(QtWidgets.QMainWindow):
         x_data = np.arange(num_candidates)
         
         self.ax.plot(x_data, scores, 
-                     color=LINE_COLOR, 
-                     linewidth=3, 
-                     marker='o', 
-                     markersize=8, 
-                     markerfacecolor=LINE_COLOR,
-                     markeredgecolor=TEXT_COLOR,
-                     label='Material Score')
+                      color=LINE_COLOR, 
+                      linewidth=3, 
+                      marker='o', 
+                      markersize=8, 
+                      markerfacecolor=LINE_COLOR,
+                      markeredgecolor=TEXT_COLOR,
+                      label='Material Score')
         
         self.ax.fill_between(x_data, scores, color=FILL_COLOR, alpha=0.8)
 
@@ -494,8 +487,8 @@ class ExactMaterialSelector(QtWidgets.QMainWindow):
         RIGHT_END_COLOR = "rgba(15, 35, 55, 200)"
         
         # Accent Colors (Vibrant Blue/Cyan)
-        ACCENT_COLOR = "#00BFFF"  # Deep Sky Blue
-        ACCENT_DARK = "#008B8B"   # Dark Cyan
+        ACCENT_COLOR = "#00BFFF"   # Deep Sky Blue
+        ACCENT_DARK = "#008B8B"    # Dark Cyan
         
         GRAPH_BG = "rgba(5, 20, 40, 255)" 
 
